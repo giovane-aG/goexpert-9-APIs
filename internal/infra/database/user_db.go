@@ -38,4 +38,5 @@ func (u *User) FindById(id string) (*entity.User, error) {
 
 	u.DB.Where("id = ?", parsedID).Find(&user)
 	return &user, nil
+
 }
