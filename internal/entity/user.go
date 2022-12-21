@@ -23,7 +23,7 @@ func NewUser(name, email, password string) (*User, error) {
 		Name:     name,
 		Email:    email,
 		Password: string(hash),
-		ID:       entity.NewId(),
+		ID:       entity.NewID(),
 	}, nil
 }
 
