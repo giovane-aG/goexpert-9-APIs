@@ -2,6 +2,7 @@ package database
 
 import (
 	"github.com/giovane-aG/goexpert/9-APIs/internal/entity"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -24,5 +25,17 @@ func (u *User) FindByEmail(email string) (*entity.User, error) {
 	if err != nil {
 		return nil, err
 	}
+	return &user, nil
+}
+
+func (u *User) FindById(id string) (*entity.User, error) {
+	var user entity.User
+
+	parsedID, err := uuid.Parse(id)
+	if err != nil {
+		return nil, err
+	}
+
+	u.DB.Where("id = ?", parsedID).Find(&user)
 	return &user, nil
 }
