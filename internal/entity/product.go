@@ -1,39 +1,49 @@
 package entity
 
 import (
-	"errors"
+	"time"
 
+	"github.com/giovane-aG/goexpert/9-APIs/internal/errors"
 	"github.com/giovane-aG/goexpert/9-APIs/pkg/entity"
-)
-
-var (
-	ErrRequiredPrice = errors.New("price is required")
-	ErrInvalidPrice  = errors.New("invalid price")
-	ErrRequiredName  = errors.New("name is required")
-	ErrRequiredID    = errors.New("id is required")
-	ErrInvalidID     = errors.New("invalid id")
-	ErrNotFound      = errors.New("product not found")
 )
 
 type Product struct {
 	ID        entity.ID `json:"id"`
 	Name      string    `json:"name"`
 	Price     float64   `json:"price"`
-	CreatedAt string    `json:"created_at"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
-func ValidateProduct(p *Product) error {
+func (p *Product) Validate() error {
 	if p.ID.String() == "" {
-		return ErrRequiredID
+		return errors.ErrRequiredID
+	}
+	if _, err := entity.ParseID(p.ID.String()); err != nil {
+		return errors.ErrInvalidID
 	}
 	if p.Name == "" {
-		return ErrRequiredName
+		return errors.ErrRequiredName
 	}
 	if p.Price == 0 {
-		return ErrRequiredPrice
+		return errors.ErrRequiredPrice
 	}
 	if p.Price < 0 {
-		return ErrInvalidPrice
+		return errors.ErrInvalidPrice
 	}
 	return nil
+}
+
+func NewProduct(name string, price float64) (*Product, error) {
+	product := &Product{
+		ID:        entity.NewID(),
+		Name:      name,
+		Price:     price,
+		CreatedAt: time.Now(),
+	}
+
+	err := product.Validate()
+	if err != nil {
+		return nil, err
+	}
+	return product, nil
 }
