@@ -3,6 +3,7 @@ package entity
 import (
 	"testing"
 
+	"github.com/giovane-aG/goexpert/9-APIs/internal/errors"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,4 +19,10 @@ func TestNewProduct(t *testing.T) {
 	assert.Equal(t, 10.0, product.Price, "Price should be 10.0")
 	assert.NotEmpty(t, product.ID, "ID should not be empty")
 	assert.NotEmpty(t, product.CreatedAt, "CreatedAt should not be empty")
+}
+func TestNewProductPriceRequired(t *testing.T) {
+	product, err := NewProduct("product", 0.0)
+
+	assert.Nil(t, product)
+	assert.Equal(t, errors.ErrRequiredPrice, err, "Price is required")
 }
