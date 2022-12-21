@@ -32,3 +32,10 @@ func TestNewProductInvalidPrice(t *testing.T) {
 	assert.Nil(t, product)
 	assert.Equal(t, errors.ErrInvalidPrice, err, "Price should be greater than 0")
 }
+
+func TestNewProductInvalidName(t *testing.T) {
+	product, err := NewProduct("", 10.0)
+
+	assert.Nil(t, product)
+	assert.Equal(t, errors.ErrRequiredName, err, "Name should not be empty")
+}
