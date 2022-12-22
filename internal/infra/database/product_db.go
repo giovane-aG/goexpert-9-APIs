@@ -2,6 +2,7 @@ package database
 
 import (
 	"github.com/giovane-aG/goexpert/9-APIs/internal/entity"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -31,4 +32,21 @@ func (p *Product) FindAll(page, limit int, sort string) ([]entity.Product, error
 	}
 
 	return products, nil
+}
+
+func (p *Product) FindById(id string) (*entity.Product, error) {
+	var product *entity.Product
+	parsedID, err := uuid.Parse(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = p.DB.Find(product, "id = ?", parsedID).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return product, nil
 }
