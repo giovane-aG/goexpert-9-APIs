@@ -1,6 +1,8 @@
 package entity
 
 import (
+	"errors"
+
 	"github.com/giovane-aG/goexpert/9-APIs/pkg/entity"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -13,6 +15,10 @@ type User struct {
 }
 
 func NewUser(name, email, password string) (*User, error) {
+
+	if name == "" || email == "" || password == "" {
+		return nil, errors.New("Please fill all of user fields")
+	}
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
