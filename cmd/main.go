@@ -10,7 +10,7 @@ import (
 
 	"github.com/giovane-aG/goexpert/9-APIs/configs"
 	user_controller "github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/user"
-
+	"github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/user/dtos"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -42,12 +42,6 @@ func initDb(config *configs.Conf) *gorm.DB {
 	return db
 }
 
-type createUserDto struct {
-	Name     string
-	Email    string
-	Password string
-}
-
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		userController := user_controller.NewUserController(db)
@@ -57,7 +51,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 
-		var parsedBody *createUserDto
+		var parsedBody *dtos.CreateUserDto
 		err = json.Unmarshal(body, &parsedBody)
 		if err != nil {
 			panic(err)
