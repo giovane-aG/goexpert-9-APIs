@@ -40,3 +40,16 @@ func TestCreate(t *testing.T) {
 	assert.Equal(t, productCreated.Price, newProduct.Price)
 	assert.EqualValues(t, productCreated.CreatedAt.Format(time.Stamp), newProduct.CreatedAt.Format(time.Stamp))
 }
+
+func TestFindAll(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open("file::memory"), &gorm.Config{})
+	if err != nil {
+		panic(err)
+	}
+
+	var products []entity.Product
+	p := NewProduct(db)
+
+	products, _ = p.FindAll(2, 3, "")
+	assert.NotNil(t, products)
+}
