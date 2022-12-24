@@ -2,7 +2,10 @@ package database
 
 import (
 	"testing"
+<<<<<<< HEAD
 	"time"
+=======
+>>>>>>> 25c3ab20e7c34ed7ba359f01974f4dd59ff09795
 
 	"github.com/stretchr/testify/assert"
 
