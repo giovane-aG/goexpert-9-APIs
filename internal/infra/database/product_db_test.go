@@ -81,3 +81,31 @@ func TestFindById(t *testing.T) {
 	assert.Equal(t, newProduct.Name, foundProduct.Name)
 	assert.Equal(t, newProduct.Price, foundProduct.Price)
 }
+
+func TestUpdate(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open("file::memory"), &gorm.Config{})
+	if err != nil {
+		panic(err)
+	}
+
+	p := NewProduct(db)
+
+	var newProduct *entity.Product
+	newProduct, _ = entity.NewProduct("Monitor Husky Tempest 34'", 2299.99)
+	err = p.Create(newProduct)
+
+	newProduct.Price = 2184.99
+	newProduct.Name = "Monitor Husky Tempest 34 polegadas"
+
+	err = p.Update(newProduct)
+
+	productUpdated, err := p.FindById(newProduct.ID.String())
+	if err != nil {
+		panic(err)
+	}
+
+	assert.Nil(t, err)
+	assert.NotNil(t, productUpdated)
+	assert.Equal(t, newProduct.Price, productUpdated.Price)
+	assert.Equal(t, newProduct.Name, productUpdated.Name)
+}
