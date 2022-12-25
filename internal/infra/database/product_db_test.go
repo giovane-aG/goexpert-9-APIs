@@ -17,6 +17,7 @@ func TestCreate(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
+
 	db.AutoMigrate(&entity.Product{})
 	p := NewProduct(db)
 
@@ -52,4 +53,31 @@ func TestFindAll(t *testing.T) {
 
 	products, _ = p.FindAll(2, 3, "")
 	assert.NotNil(t, products)
+}
+
+func TestFindById(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open("file::memory"), &gorm.Config{})
+	if err != nil {
+		panic(err)
+	}
+	p := NewProduct(db)
+
+	var newProduct *entity.Product
+	newProduct, _ = entity.NewProduct("Monitor Husky Tempest 34'", 2299.99)
+
+	err = p.Create(newProduct)
+	if err != nil {
+		panic(err)
+	}
+
+	foundProduct, err := p.FindById(newProduct.ID.String())
+	if err != nil {
+		panic(err)
+	}
+
+	assert.NotNil(t, foundProduct)
+	assert.Equal(t, newProduct.ID, foundProduct.ID)
+	assert.Equal(t, newProduct.CreatedAt.Format(time.Stamp), foundProduct.CreatedAt.Format(time.Stamp))
+	assert.Equal(t, newProduct.Name, foundProduct.Name)
+	assert.Equal(t, newProduct.Price, foundProduct.Price)
 }
