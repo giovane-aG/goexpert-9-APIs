@@ -109,3 +109,25 @@ func TestUpdate(t *testing.T) {
 	assert.Equal(t, newProduct.Price, productUpdated.Price)
 	assert.Equal(t, newProduct.Name, productUpdated.Name)
 }
+
+func TestDelete(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open("file::memory"), &gorm.Config{})
+	if err != nil {
+		panic(err)
+	}
+
+	p := NewProduct(db)
+
+	var newProduct *entity.Product
+	newProduct, _ = entity.NewProduct("Monitor Husky Tempest 34'", 2299.99)
+	err = p.Create(newProduct)
+
+	err = p.Delete(newProduct.ID.String())
+
+	productDeleted, err := p.FindById(newProduct.ID.String())
+	if err != nil {
+		panic(err)
+	}
+
+	assert.Nil(t, productDeleted)
+}
