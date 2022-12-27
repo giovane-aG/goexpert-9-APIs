@@ -59,7 +59,7 @@ func (p *Product) Update(product *entity.Product) error {
 		return err
 	}
 
-	return p.DB.Save(product).Error
+	return p.DB.Updates(product).Error
 }
 
 func (p *Product) Delete(id string) error {
