@@ -1,6 +1,8 @@
 package database
 
 import (
+	"errors"
+
 	"github.com/giovane-aG/goexpert/9-APIs/internal/entity"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -38,5 +40,17 @@ func (u *User) FindById(id string) (*entity.User, error) {
 
 	u.DB.Where("id = ?", parsedID).Find(&user)
 	return &user, nil
+}
 
+func (u *User) Update(user *entity.User) error {
+	user, err := u.FindById(user.ID.String())
+	if err != nil {
+		return err
+	}
+
+	if user == nil {
+		return errors.New("No user found with this ID")
+	}
+
+	return u.DB.Save(user).Error
 }
