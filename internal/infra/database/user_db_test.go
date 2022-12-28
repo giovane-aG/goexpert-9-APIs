@@ -60,6 +60,7 @@ func TestFindUserById(t *testing.T) {
 
 	db.AutoMigrate(&entity.User{})
 	u := NewUser(db)
+
 	newUser, err := entity.NewUser("Giovane", "findbyid@email.com", "123456")
 
 	u.DB.Create(newUser)
