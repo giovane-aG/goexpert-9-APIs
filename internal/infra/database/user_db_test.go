@@ -73,3 +73,30 @@ func TestFindUserById(t *testing.T) {
 	assert.Equal(t, foundUser.Email, newUser.Email)
 	assert.Equal(t, foundUser.Password, newUser.Password)
 }
+
+func TestUpdateUser(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open("file::memory"), &gorm.Config{})
+	if err != nil {
+		panic(err)
+	}
+
+	db.AutoMigrate(&entity.User{})
+	u := NewUser(db)
+
+	newUser, err := entity.NewUser("Giovane", "update@email.com", "123456")
+
+	u.DB.Create(newUser)
+
+	newUser.Name = "Giovane Updated"
+	u.Update(newUser)
+
+	var userUpdated *entity.User
+	u.DB.Last(&userUpdated, "id = ?", newUser.ID.String())
+
+	assert.Nil(t, err)
+	assert.NotNil(t, userUpdated)
+	assert.Equal(t, userUpdated.ID, newUser.ID)
+	assert.Equal(t, userUpdated.Name, newUser.Name)
+	assert.Equal(t, userUpdated.Email, newUser.Email)
+	assert.Equal(t, userUpdated.Password, newUser.Password)
+}
