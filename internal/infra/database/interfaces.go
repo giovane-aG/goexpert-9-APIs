@@ -6,7 +6,9 @@ import (
 
 type UserInterface interface {
 	Create(user *entity.User) error
-	Find(id string) (*entity.User, error)
+	FindByEmail(email string) (*entity.User, error)
+	FindById(id string) (*entity.User, error)
+	Update(user *entity.User) error
 }
 
 type ProductInterface interface {
