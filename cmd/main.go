@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/giovane-aG/goexpert/9-APIs/configs"
+	"github.com/giovane-aG/goexpert/9-APIs/internal/infra/database"
 	user_controller "github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/user"
 	"github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/user/dtos"
 	"gorm.io/driver/postgres"
@@ -44,7 +45,8 @@ func initDb(config *configs.Conf) *gorm.DB {
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
-		userController := user_controller.NewUserController(db)
+		userDB := database.NewUser(db)
+		userController := user_controller.NewUserController(*userDB)
 
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
