@@ -3,16 +3,15 @@ package user_controller
 import (
 	"github.com/giovane-aG/goexpert/9-APIs/internal/entity"
 	"github.com/giovane-aG/goexpert/9-APIs/internal/infra/database"
-	"gorm.io/gorm"
 )
 
 type UserController struct {
-	UserModel *database.User
+	UserDB database.UserInterface
 }
 
-func NewUserController(db *gorm.DB) *UserController {
-	var userModel *database.User = &database.User{DB: db}
-	return &UserController{UserModel: userModel}
+func NewUserController(userDB database.User) *UserController {
+	var userModel *database.User = database.NewUser(userDB.DB)
+	return &UserController{UserDB: userModel}
 }
 
 func (c *UserController) CreateUser(name, email, password string) error {
@@ -24,6 +23,6 @@ func (c *UserController) CreateUser(name, email, password string) error {
 		return err
 	}
 
-	c.UserModel.Create(user)
+	c.UserDB.Create(user)
 	return nil
 }
