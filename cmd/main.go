@@ -1,22 +1,20 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"os"
 	"time"
 
 	"github.com/giovane-aG/goexpert/9-APIs/configs"
-	"github.com/giovane-aG/goexpert/9-APIs/internal/infra/database"
-	user_controller "github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/user"
-	"github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/user/dtos"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 
 	"net/http"
+
+	"github.com/giovane-aG/goexpert/9-APIs/internal/infra/database"
+	user_controller "github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/user"
 )
 
 func initDb(config *configs.Conf) *gorm.DB {
@@ -43,41 +41,14 @@ func initDb(config *configs.Conf) *gorm.DB {
 	return db
 }
 
-func CreateUser(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "POST" {
-		userDB := database.NewUser(db)
-		userController := user_controller.NewUserController(*userDB)
-
-		body, err := io.ReadAll(r.Body)
-		if err != nil {
-			panic(err)
-		}
-
-		var parsedBody *dtos.CreateUserDto
-		err = json.Unmarshal(body, &parsedBody)
-		if err != nil {
-			panic(err)
-		}
-
-		err = userController.CreateUser(parsedBody.Name, parsedBody.Email, parsedBody.Password)
-		if err != nil {
-			response, _ := json.Marshal(map[string]string{"message": err.Error()})
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write(response)
-			return
-		}
-
-		response, _ := json.Marshal(map[string]string{"message": "User created successfully"})
-		w.WriteHeader(http.StatusCreated)
-		w.Write(response)
-	}
-}
-
 func initServer(port int, db *gorm.DB) {
 	var multiplexer http.ServeMux
 	portToString := fmt.Sprintf(":%v", port)
 
-	multiplexer.HandleFunc("/user", CreateUser)
+	userDb := database.NewUser(db)
+	userController := user_controller.NewUserController(*userDb)
+
+	multiplexer.HandleFunc("/user", userController.CreateUser)
 	http.ListenAndServe(portToString, &multiplexer)
 }
 
