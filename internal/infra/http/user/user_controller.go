@@ -67,7 +67,6 @@ func (c *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 func (c *UserController) FindByEmail(w http.ResponseWriter, r *http.Request) {
 	email := chi.URLParam(r, "email")
-	fmt.Println(email)
 
 	user, err := c.UserDB.FindByEmail(email)
 	if err != nil {
@@ -82,6 +81,18 @@ func (c *UserController) FindByEmail(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Write(jsonResponse)
-	w.WriteHeader(http.StatusOK)
+	return
+}
+
+func (c *UserController) FindById(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	user, err := c.UserDB.FindById(id)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+
+	jsonResponse, _ := json.Marshal(user)
+	w.Write(jsonResponse)
 	return
 }
