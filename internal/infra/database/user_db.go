@@ -22,11 +22,17 @@ func (u *User) Create(user *entity.User) error {
 
 func (u *User) FindByEmail(email string) (*entity.User, error) {
 	var user entity.User
-	err := u.DB.Where("email = ?", email).Find(&user).Error
+	tx := u.DB.Where("email = ?", email).Find(&user)
+	rows := tx.RowsAffected
 
-	if err != nil {
-		return nil, err
+	if tx.Error != nil {
+		return nil, tx.Error
 	}
+
+	if rows == 0 {
+		return nil, nil
+	}
+
 	return &user, nil
 }
 
