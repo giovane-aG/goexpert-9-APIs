@@ -44,7 +44,11 @@ func (u *User) FindById(id string) (*entity.User, error) {
 		return nil, err
 	}
 
-	u.DB.Where("id = ?", parsedID).Find(&user)
+	tx := u.DB.Where("id = ?", parsedID).Find(&user)
+
+	if tx.RowsAffected == 0 {
+		return nil, nil
+	}
 	return &user, nil
 }
 
