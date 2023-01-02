@@ -52,6 +52,7 @@ func initServer(port int, db *gorm.DB) {
 
 	r.HandleFunc("/user", userController.CreateUser)
 	r.HandleFunc("/user/findByEmail/{email}", userController.FindByEmail)
+	r.HandleFunc("/user/findById/{id}", userController.FindById)
 	http.ListenAndServe(portToString, r)
 }
 
