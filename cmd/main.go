@@ -15,6 +15,8 @@ import (
 
 	"github.com/giovane-aG/goexpert/9-APIs/internal/infra/database"
 	user_controller "github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/user"
+
+	"github.com/go-chi/chi/v5"
 )
 
 func initDb(config *configs.Conf) *gorm.DB {
@@ -42,14 +44,15 @@ func initDb(config *configs.Conf) *gorm.DB {
 }
 
 func initServer(port int, db *gorm.DB) {
-	var multiplexer http.ServeMux
+	r := chi.NewRouter()
 	portToString := fmt.Sprintf(":%v", port)
 
 	userDb := database.NewUser(db)
 	userController := user_controller.NewUserController(*userDb)
 
-	multiplexer.HandleFunc("/user", userController.CreateUser)
-	http.ListenAndServe(portToString, &multiplexer)
+	r.HandleFunc("/user", userController.CreateUser)
+	r.HandleFunc("/user/findByEmail/{email}", userController.FindByEmail)
+	http.ListenAndServe(portToString, r)
 }
 
 var config *configs.Conf
