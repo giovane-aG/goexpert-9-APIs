@@ -54,6 +54,7 @@ func initServer(port int, db *gorm.DB) {
 	r.Get("/user/findByEmail/{email}", userController.FindByEmail)
 	r.Get("/user/findById/{id}", userController.FindById)
 	r.Put("/user/{id}", userController.Update)
+	r.Delete("/user/{id}", userController.Delete)
 	http.ListenAndServe(portToString, r)
 }
 
