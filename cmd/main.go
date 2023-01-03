@@ -14,6 +14,7 @@ import (
 	"net/http"
 
 	"github.com/giovane-aG/goexpert/9-APIs/internal/infra/database"
+	auth_controller "github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/auth"
 	user_controller "github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/user"
 
 	"github.com/go-chi/chi/v5"
@@ -49,12 +50,15 @@ func initServer(port int, db *gorm.DB) {
 
 	userDb := database.NewUser(db)
 	userController := user_controller.NewUserController(*userDb)
+	authController := auth_controller.NewAuthController()
 
 	r.Post("/user", userController.CreateUser)
 	r.Get("/user/findByEmail/{email}", userController.FindByEmail)
 	r.Get("/user/findById/{id}", userController.FindById)
 	r.Put("/user/{id}", userController.Update)
 	r.Delete("/user/{id}", userController.Delete)
+
+	r.Post("/auth/login", authController.Login)
 	http.ListenAndServe(portToString, r)
 }
 
