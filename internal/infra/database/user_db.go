@@ -6,6 +6,8 @@ import (
 	"github.com/giovane-aG/goexpert/9-APIs/internal/entity"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+
+	http_errors "github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/errors"
 )
 
 type User struct {
@@ -63,4 +65,17 @@ func (u *User) Update(user *entity.User) error {
 	}
 
 	return u.DB.Save(user).Error
+}
+
+func (u *User) Delete(id string) error {
+	savedUser, err := u.FindById(id)
+	if err != nil {
+		return err
+	}
+
+	if savedUser == nil {
+		return http_errors.ErrHttpNotFound
+	}
+
+	return u.DB.Delete(savedUser).Error
 }
