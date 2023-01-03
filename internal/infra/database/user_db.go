@@ -53,12 +53,12 @@ func (u *User) FindById(id string) (*entity.User, error) {
 }
 
 func (u *User) Update(user *entity.User) error {
-	user, err := u.FindById(user.ID.String())
+	savedUser, err := u.FindById(user.ID.String())
 	if err != nil {
 		return err
 	}
 
-	if user == nil {
+	if savedUser == nil {
 		return errors.New("No user found with this ID")
 	}
 

@@ -130,8 +130,12 @@ func (c *UserController) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user.Name = parsedBody.Name
-	user.Email = parsedBody.Email
+	if parsedBody.Name != "" {
+		user.Name = parsedBody.Name
+	}
+	if parsedBody.Email != "" {
+		user.Email = parsedBody.Email
+	}
 
 	err = c.UserDB.Update(user)
 }
