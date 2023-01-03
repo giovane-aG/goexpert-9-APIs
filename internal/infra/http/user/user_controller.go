@@ -96,3 +96,42 @@ func (c *UserController) FindById(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonResponse)
 	return
 }
+
+func (c *UserController) Update(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+
+	user, err := c.UserDB.FindById(id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if user == nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	var parsedBody *dtos.UpdateUserDto = &dtos.UpdateUserDto{}
+	json.Unmarshal(body, &parsedBody)
+	err = parsedBody.ValidateFields()
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		message := fmt.Sprintf("message: %v", err)
+		parsedMessage, _ := json.Marshal(map[string]string{"message": message})
+
+		w.Write(parsedMessage)
+		return
+	}
+
+	user.Name = parsedBody.Name
+	user.Email = parsedBody.Email
+
+	err = c.UserDB.Update(user)
+}
