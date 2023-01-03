@@ -8,6 +8,7 @@ import (
 
 	"github.com/giovane-aG/goexpert/9-APIs/internal/entity"
 	"github.com/giovane-aG/goexpert/9-APIs/internal/infra/database"
+	http_errors "github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/errors"
 	"github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/user/dtos"
 	"github.com/go-chi/chi/v5"
 )
@@ -138,4 +139,21 @@ func (c *UserController) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = c.UserDB.Update(user)
+}
+
+func (c *UserController) Delete(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	err := c.UserDB.Delete(id)
+	if err != nil {
+		if err == http_errors.ErrHttpNotFound {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	return
 }
