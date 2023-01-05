@@ -50,7 +50,7 @@ func initServer(port int, db *gorm.DB) {
 
 	userDb := database.NewUser(db)
 	userController := user_controller.NewUserController(*userDb)
-	authController := auth_controller.NewAuthController()
+	authController := auth_controller.NewAuthController(userDb, config.JWTSecret, config.JWTExpiresIn)
 
 	r.Post("/user", userController.CreateUser)
 	r.Get("/user/findByEmail/{email}", userController.FindByEmail)
