@@ -54,15 +54,15 @@ func initServer(port int, db *gorm.DB) {
 	userController := user_controller.NewUserController(*userDb)
 	authController := auth_controller.NewAuthController(userDb, config.JWTSecret, config.JWTExpiresIn)
 
-	r.Group(func(r chi.Router) {
+	r.Route("/user", func(r chi.Router) {
 		r.Use(jwtauth.Verifier(tokenAuth))
 		r.Use(jwtauth.Authenticator)
 
-		r.Post("/user", userController.CreateUser)
-		r.Get("/user/findByEmail/{email}", userController.FindByEmail)
-		r.Get("/user/findById/{id}", userController.FindById)
-		r.Put("/user/{id}", userController.Update)
-		r.Delete("/user/{id}", userController.Delete)
+		r.Post("/", userController.CreateUser)
+		r.Get("/findByEmail/{email}", userController.FindByEmail)
+		r.Get("/findById/{id}", userController.FindById)
+		r.Put("/{id}", userController.Update)
+		r.Delete("/{id}", userController.Delete)
 	})
 
 	r.Post("/auth/login", authController.Login)
