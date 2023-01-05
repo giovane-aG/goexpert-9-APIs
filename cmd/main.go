@@ -18,6 +18,7 @@ import (
 	user_controller "github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/user"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/jwtauth"
 )
 
 func initDb(config *configs.Conf) *gorm.DB {
@@ -47,16 +48,22 @@ func initDb(config *configs.Conf) *gorm.DB {
 func initServer(port int, db *gorm.DB) {
 	r := chi.NewRouter()
 	portToString := fmt.Sprintf(":%v", port)
+	tokenAuth := jwtauth.New("HS256", []byte(config.JWTSecret), nil)
 
 	userDb := database.NewUser(db)
 	userController := user_controller.NewUserController(*userDb)
 	authController := auth_controller.NewAuthController(userDb, config.JWTSecret, config.JWTExpiresIn)
 
-	r.Post("/user", userController.CreateUser)
-	r.Get("/user/findByEmail/{email}", userController.FindByEmail)
-	r.Get("/user/findById/{id}", userController.FindById)
-	r.Put("/user/{id}", userController.Update)
-	r.Delete("/user/{id}", userController.Delete)
+	r.Group(func(r chi.Router) {
+		r.Use(jwtauth.Verifier(tokenAuth))
+		r.Use(jwtauth.Authenticator)
+
+		r.Post("/user", userController.CreateUser)
+		r.Get("/user/findByEmail/{email}", userController.FindByEmail)
+		r.Get("/user/findById/{id}", userController.FindById)
+		r.Put("/user/{id}", userController.Update)
+		r.Delete("/user/{id}", userController.Delete)
+	})
 
 	r.Post("/auth/login", authController.Login)
 	http.ListenAndServe(portToString, r)
