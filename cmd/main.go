@@ -61,6 +61,7 @@ func initServer(port int, db *gorm.DB) {
 		r.Use(jwtauth.Authenticator)
 
 		r.Post("/", productController.Create)
+		r.Get("/findAll", productController.FindAll)
 	})
 
 	r.Post("/auth/login", authController.Login)
