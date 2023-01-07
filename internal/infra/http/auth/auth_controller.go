@@ -2,6 +2,8 @@ package auth_controller
 
 import (
 	"encoding/json"
+	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/giovane-aG/goexpert/9-APIs/internal/infra/database"
@@ -55,11 +57,18 @@ func (a *AuthController) Login(w http.ResponseWriter, r *http.Request) {
 
 	tokenAuth := jwtauth.New("HS256", []byte(a.JwtSecret), nil)
 
-	_, token, _ := tokenAuth.Encode(map[string]interface{}{
+	_, token, err := tokenAuth.Encode(map[string]interface{}{
 		"user_id": user.ID.String(),
 		"email":   user.Email,
 	})
 
+	if err != nil {
+		log.Fatal(err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Println("token", token)
 	accessToken := AcessToken{
 		Token: token,
 	}
