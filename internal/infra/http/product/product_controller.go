@@ -73,6 +73,17 @@ func (p *ProductController) FindAll(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(products)
 }
-func (p *ProductController) FindById(w http.ResponseWriter, r *http.Request) {}
-func (p *ProductController) Update(w http.ResponseWriter, r *http.Request)   {}
-func (p *ProductController) Delete(w http.ResponseWriter, r *http.Request)   {}
+func (p *ProductController) FindById(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+
+	product, err := p.ProductDB.FindById(id)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(product)
+}
+func (p *ProductController) Update(w http.ResponseWriter, r *http.Request) {}
+func (p *ProductController) Delete(w http.ResponseWriter, r *http.Request) {}
