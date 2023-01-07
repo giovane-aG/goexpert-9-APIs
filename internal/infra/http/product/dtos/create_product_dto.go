@@ -11,4 +11,5 @@ func (c *CreateProductDto) ValidateFields() error {
 	if c.Name == "" || c.Price <= 0 {
 		return errors.New("please insert valid fields")
 	}
+	return nil
 }
