@@ -11,6 +11,7 @@ import (
 
 	"github.com/giovane-aG/goexpert/9-APIs/internal/infra/database"
 	auth_controller "github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/auth"
+	product_controller "github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/product"
 	user_controller "github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/user"
 
 	"github.com/go-chi/chi/v5"
@@ -38,7 +39,10 @@ func initServer(port int, db *gorm.DB) {
 	tokenAuth := jwtauth.New("HS256", []byte(config.JWTSecret), nil)
 
 	userDb := database.NewUser(db)
+	productDb := database.NewProduct(db)
+
 	userController := user_controller.NewUserController(*userDb)
+	productController := product_controller.NewProductController(productDb)
 	authController := auth_controller.NewAuthController(userDb, config.JWTSecret, config.JWTExpiresIn)
 
 	r.Route("/user", func(r chi.Router) {
@@ -50,6 +54,13 @@ func initServer(port int, db *gorm.DB) {
 		r.Get("/findById/{id}", userController.FindById)
 		r.Put("/{id}", userController.Update)
 		r.Delete("/{id}", userController.Delete)
+	})
+
+	r.Route("/product", func(r chi.Router) {
+		r.Use(jwtauth.Verifier(tokenAuth))
+		r.Use(jwtauth.Authenticator)
+
+		r.Post("/", productController.Create)
 	})
 
 	r.Post("/auth/login", authController.Login)
