@@ -3,10 +3,12 @@ package product_controller
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/giovane-aG/goexpert/9-APIs/internal/entity"
 	"github.com/giovane-aG/goexpert/9-APIs/internal/infra/database"
 	"github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/product/dtos"
+	"github.com/go-chi/chi/v5"
 )
 
 type ProductController struct {
@@ -55,7 +57,22 @@ func (p *ProductController) Create(w http.ResponseWriter, r *http.Request) {
 	return
 
 }
-func (p *ProductController) FindAll(w http.ResponseWriter, r *http.Request)  {}
+func (p *ProductController) FindAll(w http.ResponseWriter, r *http.Request) {
+	var page, limit int
+	var sort string
+
+	page, _ = strconv.Atoi(chi.URLParam(r, "page"))
+	limit, _ = strconv.Atoi(chi.URLParam(r, "limit"))
+	sort = chi.URLParam(r, "sort")
+
+	products, err := p.ProductDB.FindAll(page, limit, sort)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+
+	json.NewEncoder(w).Encode(products)
+}
 func (p *ProductController) FindById(w http.ResponseWriter, r *http.Request) {}
 func (p *ProductController) Update(w http.ResponseWriter, r *http.Request)   {}
 func (p *ProductController) Delete(w http.ResponseWriter, r *http.Request)   {}
