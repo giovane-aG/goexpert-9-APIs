@@ -55,8 +55,8 @@ func (p *ProductController) Create(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(201)
 	json.NewEncoder(w).Encode(newProduct)
 	return
-
 }
+
 func (p *ProductController) FindAll(w http.ResponseWriter, r *http.Request) {
 	var page, limit int
 	var sort string
@@ -73,6 +73,7 @@ func (p *ProductController) FindAll(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(products)
 }
+
 func (p *ProductController) FindById(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 
@@ -85,5 +86,48 @@ func (p *ProductController) FindById(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(product)
 }
-func (p *ProductController) Update(w http.ResponseWriter, r *http.Request) {}
+
+func (p *ProductController) Update(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	var parsedBody dtos.UpdateProductDto
+	err := json.NewDecoder(r.Body).Decode(&parsedBody)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	err = parsedBody.ValidateFields()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	foundProduct, err := p.ProductDB.FindById(id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	if foundProduct == nil {
+		w.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(w).Encode(map[string]string{"message": "no product with that id was found"})
+		return
+	}
+
+	updatedProduct := entity.Product{}
+	if parsedBody.Name != "" {
+		updatedProduct.Name = parsedBody.Name
+	}
+
+	if parsedBody.Price > 0 {
+		updatedProduct.Price = parsedBody.Price
+	}
+
+	p.ProductDB.Update(&updatedProduct)
+	json.NewEncoder(w).Encode(updatedProduct)
+
+}
 func (p *ProductController) Delete(w http.ResponseWriter, r *http.Request) {}
