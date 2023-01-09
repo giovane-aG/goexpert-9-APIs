@@ -2,7 +2,6 @@ package auth_controller
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -21,10 +20,9 @@ type AcessToken struct {
 	Token string `json:"token"`
 }
 
-func NewAuthController(userDb *database.User, jwtSecret string, jwtExpiresIn int) *AuthController {
+func NewAuthController(userDb *database.User, jwtExpiresIn int) *AuthController {
 	return &AuthController{
 		UserDB:       userDb,
-		JwtSecret:    jwtSecret,
 		JwtExpiresIn: jwtExpiresIn,
 	}
 }
@@ -54,9 +52,7 @@ func (a *AuthController) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-
-	tokenAuth := jwtauth.New("HS256", []byte(a.JwtSecret), nil)
-
+	tokenAuth := r.Context().Value("jwtAuth").(*jwtauth.JWTAuth)
 	_, token, err := tokenAuth.Encode(map[string]interface{}{
 		"user_id": user.ID.String(),
 		"email":   user.Email,
@@ -68,7 +64,6 @@ func (a *AuthController) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("token", token)
 	accessToken := AcessToken{
 		Token: token,
 	}

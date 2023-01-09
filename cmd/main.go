@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/giovane-aG/goexpert/9-APIs/configs"
 	"gorm.io/driver/postgres"
@@ -33,7 +34,8 @@ func initDb(config *configs.Conf) *gorm.DB {
 
 func initServer(port int, db *gorm.DB) {
 	r := chi.NewRouter()
-	r.Use(middleware.Logger)
+	r.Use(loggerMiddleware)
+	r.Use(middleware.Recoverer)
 
 	portToString := fmt.Sprintf(":%v", port)
 	tokenAuth := jwtauth.New("HS256", []byte(config.JWTSecret), nil)
@@ -43,7 +45,9 @@ func initServer(port int, db *gorm.DB) {
 
 	userController := user_controller.NewUserController(*userDb)
 	productController := product_controller.NewProductController(productDb)
-	authController := auth_controller.NewAuthController(userDb, config.JWTSecret, config.JWTExpiresIn)
+
+	r.Use(middleware.WithValue("jwtAuth", tokenAuth))
+	authController := auth_controller.NewAuthController(userDb, config.JWTExpiresIn)
 
 	r.Route("/user", func(r chi.Router) {
 		r.Use(jwtauth.Verifier(tokenAuth))
@@ -68,6 +72,13 @@ func initServer(port int, db *gorm.DB) {
 
 	r.Post("/auth/login", authController.Login)
 	http.ListenAndServe(portToString, r)
+}
+
+func loggerMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("Request: IP -> %v | %v -> %v", r.RemoteAddr, r.Method, r.URL)
+		next.ServeHTTP(w, r)
+	})
 }
 
 var config *configs.Conf
