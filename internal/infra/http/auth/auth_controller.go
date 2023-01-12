@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/giovane-aG/goexpert/9-APIs/internal/errors"
 	"github.com/giovane-aG/goexpert/9-APIs/internal/infra/database"
 	"github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/auth/dtos"
 	"github.com/go-chi/jwtauth"
@@ -16,10 +17,6 @@ type AuthController struct {
 	JwtExpiresIn int
 }
 
-type AcessToken struct {
-	Token string `json:"token"`
-}
-
 func NewAuthController(userDb *database.User, jwtExpiresIn int) *AuthController {
 	return &AuthController{
 		UserDB:       userDb,
@@ -27,27 +24,43 @@ func NewAuthController(userDb *database.User, jwtExpiresIn int) *AuthController 
 	}
 }
 
+// @Summary 		Login user
+// @Description	Login user
+// @Tags				auth
+// @Accept			json
+// @Produce 		json
+// @Param 			request	body dtos.LoginDto	true	"user request"
+// @Success			200	{object}	dtos.AcessToken
+// @Failure			404	{object}	errors.Error
+// @Router			/auth/login	[post]
+// @Example		dtos.LoginDto{ "email": "giovane@email.com", "name": "Giovane", "password": "1234"}
 func (a *AuthController) Login(w http.ResponseWriter, r *http.Request) {
+	jsonEncoder := json.NewEncoder(w)
 	var loginDto *dtos.LoginDto = &dtos.LoginDto{}
 	json.NewDecoder(r.Body).Decode(loginDto)
 
 	err := loginDto.ValidateFields()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(err)
+		jsonEncoder.Encode(errors.Error{Message: err.Error()})
 		return
 	}
 
 	user, err := a.UserDB.FindByEmail(loginDto.Email)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(w).Encode(err)
+		jsonEncoder.Encode(errors.Error{Message: err.Error()})
 		return
+	}
+
+	if user == nil {
+		w.WriteHeader(http.StatusNotFound)
+		jsonEncoder.Encode(errors.Error{Message: "incorret email or password"})
 	}
 
 	if !user.ValidatePassword(loginDto.Password) {
 		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode("incorrect password")
+		jsonEncoder.Encode(errors.Error{Message: "incorret email or password"})
 		return
 	}
 
@@ -61,10 +74,11 @@ func (a *AuthController) Login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
+		jsonEncoder.Encode(errors.Error{Message: err.Error()})
 		return
 	}
 
-	accessToken := AcessToken{
+	accessToken := dtos.AcessToken{
 		Token: token,
 	}
 
