@@ -15,10 +15,27 @@ import (
 	product_controller "github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/product"
 	user_controller "github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/user"
 
+	_ "github.com/giovane-aG/goexpert/9-APIs/docs"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/jwtauth"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
+
+//	@title			Go Expert API
+//	@version		1.0
+//	@description	Production API authentication.
+//	@termsOfService	http://swagger.io/terms/
+
+//	@contact.name	Giovane Aguiar
+//	@contact.email	giovaneaalmeida27@gmail.com
+
+//	@host		localhost:8080
+//	@BasePath	/
+//  @securityDefinitions.apiKey ApiKeyAuth
+//  @in header
+//  @name Authorization
 
 func initDb(config *configs.Conf) *gorm.DB {
 	var dsn string = fmt.Sprintf("host=%v user=%v password=%v dbname=%v port=%v",
@@ -71,6 +88,8 @@ func initServer(port int, db *gorm.DB) {
 	})
 
 	r.Post("/auth/login", authController.Login)
+
+	r.Get("/docs/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:8080/docs/doc.json")))
 	http.ListenAndServe(portToString, r)
 }
 
