@@ -1,0 +1,17 @@
+basePath: /
+host: localhost:8080
+info:
+  contact:
+    email: giovaneaalmeida27@gmail.com
+    name: Giovane Aguiar
+  description: Production API authentication.
+  termsOfService: http://swagger.io/terms/
+  title: Go Expert API
+  version: "1.0"
+paths: {}
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
