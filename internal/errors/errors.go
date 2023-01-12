@@ -19,3 +19,7 @@ var (
 	ErrRequiredPassword = errors.New("password is required")
 	ErrRequiredUserName = errors.New("name is required")
 )
+
+type Error struct {
+	Message string `json:"message"`
+}
