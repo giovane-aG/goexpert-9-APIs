@@ -7,15 +7,12 @@ import (
 	"net/http"
 
 	"github.com/giovane-aG/goexpert/9-APIs/internal/entity"
+	"github.com/giovane-aG/goexpert/9-APIs/internal/errors"
 	"github.com/giovane-aG/goexpert/9-APIs/internal/infra/database"
 	http_errors "github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/errors"
 	"github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/user/dtos"
 	"github.com/go-chi/chi/v5"
 )
-
-type Error struct {
-	Message string `json:"message"`
-}
 
 type UserController struct {
 	UserDB database.UserInterface
@@ -33,7 +30,7 @@ func NewUserController(userDB database.User) *UserController {
 // @Produce 		json
 // @Param 			request	body dtos.CreateUserDto	true	"user request"
 // @Success			201
-// @Failure			500	{object}	Error
+// @Failure			500	{object}	errors.Error
 // @Router			/user	[post]
 func (c *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 	jsonEnconder := json.NewEncoder(w)
@@ -49,7 +46,7 @@ func (c *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 	err = parsedBody.ValidateFields()
 
 	if err != nil {
-		jsonEnconder.Encode(Error{Message: err.Error()})
+		jsonEnconder.Encode(errors.Error{Message: err.Error()})
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -59,7 +56,7 @@ func (c *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 	user, err = entity.NewUser(parsedBody.Name, parsedBody.Email, parsedBody.Password)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		jsonEnconder.Encode(Error{Message: err.Error()})
+		jsonEnconder.Encode(errors.Error{Message: err.Error()})
 	}
 
 	// saving entity
@@ -67,7 +64,7 @@ func (c *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		jsonEnconder.Encode(Error{Message: err.Error()})
+		jsonEnconder.Encode(errors.Error{Message: err.Error()})
 		return
 	}
 

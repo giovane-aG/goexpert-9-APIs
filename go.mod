@@ -3,7 +3,6 @@ module github.com/giovane-aG/goexpert/9-APIs
 go 1.19
 
 require (
-	github.com/go-chi/chi v1.5.1
 	github.com/go-chi/chi/v5 v5.0.8
 	github.com/go-chi/jwtauth v1.2.0
 	github.com/google/uuid v1.3.0

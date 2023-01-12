@@ -1,5 +1,10 @@
 basePath: /
 definitions:
+  dtos.AcessToken:
+    properties:
+      token:
+        type: string
+    type: object
   dtos.CreateUserDto:
     properties:
       email:
@@ -9,7 +14,14 @@ definitions:
       password:
         type: string
     type: object
-  user_controller.Error:
+  dtos.LoginDto:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  errors.Error:
     properties:
       message:
         type: string
@@ -24,6 +36,32 @@ info:
   title: Go Expert API
   version: "1.0"
 paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login user
+      parameters:
+      - description: user request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.LoginDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.AcessToken'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errors.Error'
+      summary: Login user
+      tags:
+      - auth
   /user:
     post:
       consumes:
@@ -44,7 +82,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/user_controller.Error'
+            $ref: '#/definitions/errors.Error'
       summary: Create new user
       tags:
       - users
