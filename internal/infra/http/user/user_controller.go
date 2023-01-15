@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 
 	"github.com/giovane-aG/goexpert/9-APIs/internal/entity"
 	"github.com/giovane-aG/goexpert/9-APIs/internal/errors"
@@ -30,8 +31,9 @@ func NewUserController(userDB database.User) *UserController {
 // @Produce 		json
 // @Param 			request	body dtos.CreateUserDto	true	"user request"
 // @Success			201
-// @Failure			500	{object}	errors.Error
+// @failure			500	{object}	errors.Error
 // @Router			/user	[post]
+// @Security		ApiKeyAuth
 func (c *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 	jsonEnconder := json.NewEncoder(w)
 	body, err := io.ReadAll(r.Body)
@@ -68,13 +70,25 @@ func (c *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response, _ := json.Marshal(map[string]string{"message": "User created successfully"})
-	w.Write(response)
-	w.WriteHeader(http.StatusBadRequest)
+	w.WriteHeader(http.StatusCreated)
+	jsonEnconder.Encode(errors.Error{Message: "User created successfully"})
+	return
 }
 
+// @Summary 		Find user by email
+// @Description	Find user by email
+// @Tags				users
+// @Accept			json
+// @Produce 		json
+// @Param 			email path string true "the email of the user"
+// @in					path
+// @Success			200
+// @failure			500	{object}	errors.Error
+// @Router			/user/findByEmail/{email}	[get]
+// @Security		ApiKeyAuth
 func (c *UserController) FindByEmail(w http.ResponseWriter, r *http.Request) {
 	email := chi.URLParam(r, "email")
+	email, err := url.QueryUnescape(email)
 
 	user, err := c.UserDB.FindByEmail(email)
 	if err != nil {
