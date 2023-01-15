@@ -3,8 +3,8 @@ package dtos
 import "errors"
 
 type UpdateUserDto struct {
-	Name  string `json:"name"`
-	Email string `json:"email"`
+	Name  string `json:"name" example:"Giovane"`
+	Email string `json:"email" example:"giovane@email.com"`
 }
 
 func (u UpdateUserDto) ValidateFields() error {

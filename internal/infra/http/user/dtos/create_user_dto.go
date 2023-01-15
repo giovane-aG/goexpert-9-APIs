@@ -3,9 +3,9 @@ package dtos
 import "errors"
 
 type CreateUserDto struct {
-	Name     string
-	Email    string
-	Password string
+	Name     string `json:"name" example:"Giovane"`
+	Email    string `json:"email" example:"giovane@email.com"`
+	Password string `json:"password" example:"1234"`
 }
 
 func (c CreateUserDto) ValidateFields() error {
