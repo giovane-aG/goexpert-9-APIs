@@ -29,11 +29,10 @@ func NewAuthController(userDb *database.User, jwtExpiresIn int) *AuthController 
 // @Tags				auth
 // @Accept			json
 // @Produce 		json
-// @Param 			request	body dtos.LoginDto	true	"user request"
+// @Param 			request	body dtos.LoginDto true	"user request"
 // @Success			200	{object}	dtos.AcessToken
 // @Failure			404	{object}	errors.Error
 // @Router			/auth/login	[post]
-// @Example		dtos.LoginDto{ "email": "giovane@email.com", "name": "Giovane", "password": "1234"}
 func (a *AuthController) Login(w http.ResponseWriter, r *http.Request) {
 	jsonEncoder := json.NewEncoder(w)
 	var loginDto *dtos.LoginDto = &dtos.LoginDto{}

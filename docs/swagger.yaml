@@ -17,8 +17,10 @@ definitions:
   dtos.LoginDto:
     properties:
       email:
+        example: josvane@email.com
         type: string
       password:
+        example: "1234"
         type: string
     type: object
   errors.Error:
@@ -83,7 +85,34 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/errors.Error'
+      security:
+      - ApiKeyAuth: []
       summary: Create new user
+      tags:
+      - users
+  /user/findByEmail/{email}:
+    get:
+      consumes:
+      - application/json
+      description: Find user by email
+      parameters:
+      - description: the email of the user
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errors.Error'
+      security:
+      - ApiKeyAuth: []
+      summary: Find user by email
       tags:
       - users
 securityDefinitions:
