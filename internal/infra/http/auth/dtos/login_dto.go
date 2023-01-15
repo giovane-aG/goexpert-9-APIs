@@ -3,8 +3,8 @@ package dtos
 import "errors"
 
 type LoginDto struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `json:"email" example:"josvane@email.com"`
+	Password string `json:"password" example:"1234"`
 }
 
 func (l *LoginDto) ValidateFields() error {
