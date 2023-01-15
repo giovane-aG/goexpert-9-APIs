@@ -136,6 +136,17 @@ func (c *UserController) FindById(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+// @Summary 		Update user
+// @Description	Update user
+// @Tags				users
+// @Produce 		json
+// @Param 			id path string true "the id of the user"
+// @Param				request	body	dtos.UpdateUserDto true "payload to update the user"
+// @Success			200
+// @Failure			500	{object}	errors.Error
+// @Failure			404	{object}	errors.Error
+// @Router			/user/{id}	[put]
+// @Security		ApiKeyAuth
 func (c *UserController) Update(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 
