@@ -31,7 +31,7 @@ func NewUserController(userDB database.User) *UserController {
 // @Produce 		json
 // @Param 			request	body dtos.CreateUserDto	true	"user request"
 // @Success			201
-// @failure			500	{object}	errors.Error
+// @Failure			500	{object}	errors.Error
 // @Router			/user	[post]
 // @Security		ApiKeyAuth
 func (c *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -81,13 +81,14 @@ func (c *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 // @Accept			json
 // @Produce 		json
 // @Param 			email path string true "the email of the user"
-// @in					path
 // @Success			200
-// @failure			500	{object}	errors.Error
+// @Failure			500	{object}	errors.Error
+// @Failure			400	{object}	errors.Error
 // @Router			/user/findByEmail/{email}	[get]
 // @Security		ApiKeyAuth
 func (c *UserController) FindByEmail(w http.ResponseWriter, r *http.Request) {
 	email := chi.URLParam(r, "email")
+	jsonEncoder := json.NewEncoder(w)
 	email, err := url.QueryUnescape(email)
 
 	user, err := c.UserDB.FindByEmail(email)
@@ -96,26 +97,42 @@ func (c *UserController) FindByEmail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	jsonResponse, err := json.Marshal(user)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+	if user == nil {
+		w.WriteHeader(http.StatusNotFound)
+		jsonEncoder.Encode(errors.Error{
+			Message: "No user with that email was found",
+		})
 		return
 	}
 
-	w.Write(jsonResponse)
+	jsonEncoder.Encode(user)
 	return
 }
 
+// @Summary 		Find user by id
+// @Description	Find user by id
+// @Tags				users
+// @Produce 		json
+// @Param 			id path string true "the id of the user"
+// @Success			200
+// @Failure			500	{object}	errors.Error
+// @Failure			400	{object}	errors.Error
+// @Router			/user/findById/{id}	[get]
+// @Security		ApiKeyAuth
 func (c *UserController) FindById(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
+	jsonEncoder := json.NewEncoder(w)
 	user, err := c.UserDB.FindById(id)
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		jsonEncoder.Encode(errors.Error{
+			Message: err.Error(),
+		})
+		return
 	}
 
-	jsonResponse, _ := json.Marshal(user)
-	w.Write(jsonResponse)
+	jsonEncoder.Encode(user)
 	return
 }
 
