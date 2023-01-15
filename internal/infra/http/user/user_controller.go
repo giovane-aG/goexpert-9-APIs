@@ -132,6 +132,12 @@ func (c *UserController) FindById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if user == nil {
+		w.WriteHeader(http.StatusNotFound)
+		jsonEncoder.Encode(errors.Error{Message: "No user with that id was found"})
+		return
+	}
+
 	jsonEncoder.Encode(user)
 	return
 }
@@ -190,6 +196,16 @@ func (c *UserController) Update(w http.ResponseWriter, r *http.Request) {
 	err = c.UserDB.Update(user)
 }
 
+// @Summary 		Delete user
+// @Description	Delete user
+// @Tags				users
+// @Produce 		json
+// @Param 			id path string true "the id of the user"
+// @Success			200
+// @Failure			500	{object}	errors.Error
+// @Failure			404	{object}	errors.Error
+// @Router			/user/{id}	[delete]
+// @Security		ApiKeyAuth
 func (c *UserController) Delete(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	err := c.UserDB.Delete(id)
