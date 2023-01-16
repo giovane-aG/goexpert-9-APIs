@@ -8,10 +8,10 @@ import (
 )
 
 type Product struct {
-	ID        entity.ID `json:"id"`
-	Name      string    `json:"name"`
-	Price     float64   `json:"price"`
-	CreatedAt time.Time `json:"created_at"`
+	ID        entity.ID `json:"id" example:"405aac8a-76ea-456c-8fd5-44361a684fc4"`
+	Name      string    `json:"name" example:"GALAX RTX 3070OC"`
+	Price     float64   `json:"price" example:"4000"`
+	CreatedAt time.Time `json:"created_at" example:"2022-12-22T21:39:47.591209Z"`
 }
 
 func (p *Product) Validate() error {
