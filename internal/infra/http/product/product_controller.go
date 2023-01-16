@@ -67,6 +67,17 @@ func (p *ProductController) Create(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+// @Summary 	Fetches all products
+// @Tags		products
+// @Accept		json
+// @Produce		json
+// @Param		page	query		int		false	"the page in the results"
+// @Param		limit	query		int		false	"the number of records returned"
+// @Success		200					{object}	[]entity.Product
+// @Failure		500					{object}	errors.Error
+// @Failure		400					{object}	errors.Error
+// @Router		/product/findAll	[get]
+// @Security	ApiKeyAuth
 func (p *ProductController) FindAll(w http.ResponseWriter, r *http.Request) {
 	var page, limit int
 	var sort string
