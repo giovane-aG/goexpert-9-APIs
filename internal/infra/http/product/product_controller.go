@@ -131,33 +131,54 @@ func (p *ProductController) FindById(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(product)
 }
 
+// @Summary 	Updates a product
+// @Tags		products
+// @Accept		json
+// @Produce		json
+// @Param		id			path		string					true	"the product info"
+// @Param		product		body		dtos.UpdateProductDto	true	"the product info"
+// @Success		200			{object}	entity.Product
+// @Failure		500			{object}	errors.Error
+// @Failure		400			{object}	errors.Error
+// @Failure		404			{object}	errors.Error
+// @Router		/product/{id}	[put]
+// @Security	ApiKeyAuth
 func (p *ProductController) Update(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
+	jsonEncoder := json.NewEncoder(w)
 	var parsedBody dtos.UpdateProductDto
 	err := json.NewDecoder(r.Body).Decode(&parsedBody)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		jsonEncoder.Encode(errors.Error{
+			Message: err.Error(),
+		})
 		return
 	}
 
 	err = parsedBody.ValidateFields()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		jsonEncoder.Encode(errors.Error{
+			Message: err.Error(),
+		})
 		return
 	}
 
 	foundProduct, err := p.ProductDB.FindById(id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		jsonEncoder.Encode(errors.Error{
+			Message: err.Error(),
+		})
 		return
 	}
 
 	if foundProduct == nil {
 		w.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(w).Encode(map[string]string{"message": "no product with that id was found"})
+		jsonEncoder.Encode(errors.Error{
+			Message: "No product with that id was found",
+		})
 		return
 	}
 
@@ -171,7 +192,7 @@ func (p *ProductController) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	p.ProductDB.Update(&updatedProduct)
-	json.NewEncoder(w).Encode(updatedProduct)
-
+	jsonEncoder.Encode(updatedProduct)
+	return
 }
 func (p *ProductController) Delete(w http.ResponseWriter, r *http.Request) {}

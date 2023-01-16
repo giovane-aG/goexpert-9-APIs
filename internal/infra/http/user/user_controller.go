@@ -81,7 +81,7 @@ func (c *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 // @Accept			json
 // @Produce 		json
 // @Param 			email path string true "the email of the user"
-// @Success			200
+// @Success			200	{object}	entity.User
 // @Failure			500	{object}	errors.Error
 // @Failure			400	{object}	errors.Error
 // @Router			/user/findByEmail/{email}	[get]
@@ -114,7 +114,7 @@ func (c *UserController) FindByEmail(w http.ResponseWriter, r *http.Request) {
 // @Tags				users
 // @Produce 		json
 // @Param 			id path string true "the id of the user"
-// @Success			200
+// @Success			200	{object}	entity.User
 // @Failure			500	{object}	errors.Error
 // @Failure			400	{object}	errors.Error
 // @Router			/user/findById/{id}	[get]

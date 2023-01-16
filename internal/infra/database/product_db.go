@@ -1,6 +1,8 @@
 package database
 
 import (
+	"errors"
+
 	"github.com/giovane-aG/goexpert/9-APIs/internal/entity"
 	"gorm.io/gorm"
 )
@@ -57,10 +59,14 @@ func (p *Product) FindById(id string) (*entity.Product, error) {
 
 func (p *Product) Update(product *entity.Product) error {
 
-	_, err := p.FindById(product.ID.String())
+	savedProduct, err := p.FindById(product.ID.String())
 
 	if err != nil {
 		return err
+	}
+
+	if savedProduct == nil {
+		return errors.New("No product found with this ID")
 	}
 
 	return p.DB.Save(product).Error
