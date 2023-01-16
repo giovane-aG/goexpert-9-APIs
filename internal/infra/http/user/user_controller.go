@@ -26,12 +26,12 @@ func NewUserController(userDB database.User) *UserController {
 
 // @Summary 		Create new user
 // @Description	Create new user
-// @Tags				users
+// @Tags			users
 // @Accept			json
 // @Produce 		json
-// @Param 			request	body dtos.CreateUserDto	true	"user request"
+// @Param 			request	body 		dtos.CreateUserDto	true	"user request"
 // @Success			201
-// @Failure			500	{object}	errors.Error
+// @Failure			500		{object}	errors.Error
 // @Router			/user	[post]
 // @Security		ApiKeyAuth
 func (c *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {

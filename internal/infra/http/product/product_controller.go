@@ -21,6 +21,16 @@ func NewProductController(productDB *database.Product) *ProductController {
 	}
 }
 
+// @Summary 	Creates a product
+// @Tags		products
+// @Accept		json
+// @Produce		json
+// @Param		product		body		dtos.CreateProductDto	true	"the product info"
+// @Success		201			{object}	entity.Product
+// @Failure		500			{object}	errors.Error
+// @Failure		400			{object}	errors.Error
+// @Router		/product	[post]
+// @Security	ApiKeyAuth
 func (p *ProductController) Create(w http.ResponseWriter, r *http.Request) {
 	var parsedBody dtos.CreateProductDto
 	err := json.NewDecoder(r.Body).Decode(&parsedBody)

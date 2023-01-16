@@ -1,6 +1,8 @@
 package dtos
 
-import "errors"
+import (
+	"errors"
+)
 
 type UpdateUserDto struct {
 	Name  string `json:"name" example:"Giovane"`
