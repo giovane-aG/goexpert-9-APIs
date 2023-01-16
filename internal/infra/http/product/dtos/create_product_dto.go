@@ -3,8 +3,8 @@ package dtos
 import "errors"
 
 type CreateProductDto struct {
-	Name  string
-	Price float64
+	Name  string  `json:"name" example:"Galax RTX 3070"`
+	Price float64 `json:"price" example:"3600.90"`
 }
 
 func (c *CreateProductDto) ValidateFields() error {
