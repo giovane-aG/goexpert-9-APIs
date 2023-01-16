@@ -8,10 +8,10 @@ import (
 )
 
 type User struct {
-	ID       entity.ID `json:"id"`
-	Name     string    `json:"username"`
-	Password string    `json:"password"`
-	Email    string    `json:"email"`
+	ID       entity.ID `json:"id" example:"1c77fd61-4f6c-4ca1-8967-e5172e25c274"`
+	Name     string    `json:"name" example:"giovane"`
+	Password string    `json:"password" example:"1234"`
+	Email    string    `json:"email" example:"giovane@email.com"`
 }
 
 func NewUser(name, email, password string) (*User, error) {
