@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/giovane-aG/goexpert/9-APIs/internal/entity"
+	"github.com/giovane-aG/goexpert/9-APIs/internal/errors"
 	"github.com/giovane-aG/goexpert/9-APIs/internal/infra/database"
 	"github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/product/dtos"
 	"github.com/go-chi/chi/v5"
@@ -95,12 +96,34 @@ func (p *ProductController) FindAll(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(products)
 }
 
+// @Summary 	Fetches a product by id
+// @Tags		products
+// @Accept		json
+// @Produce		json
+// @Param		id			path		string		true	"the id of the product"
+// @Success		200						{object}	entity.Product
+// @Failure		500						{object}	errors.Error
+// @Failure		400						{object}	errors.Error
+// @Failure		404						{object}	errors.Error
+// @Router		/product/findById/{id}	[get]
+// @Security	ApiKeyAuth
 func (p *ProductController) FindById(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
+	jsonEncoder := json.NewEncoder(w)
+
+	if id == "" {
+		jsonEncoder.Encode(errors.Error{
+			Message: "it is necessary to provide the product id",
+		})
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
 	product, err := p.ProductDB.FindById(id)
 	if err != nil {
-		w.Write([]byte(err.Error()))
+		jsonEncoder.Encode(errors.Error{
+			Message: err.Error(),
+		})
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
