@@ -85,6 +85,7 @@ func initServer(port int, db *gorm.DB) {
 		r.Get("/findAll", productController.FindAll)
 		r.Get("/findById/{id}", productController.FindById)
 		r.Put("/{id}", productController.Update)
+		r.Delete("/{id}", productController.Delete)
 	})
 
 	r.Post("/auth/login", authController.Login)
