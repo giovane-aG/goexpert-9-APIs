@@ -73,10 +73,14 @@ func (p *Product) Update(product *entity.Product) error {
 }
 
 func (p *Product) Delete(id string) error {
-	_, err := p.FindById(id)
-	if err != nil {
-		return err
-	}
 
-	return p.DB.Delete(&entity.Product{}, "id = ?", id).Error
+	tx := p.DB.Delete(&entity.Product{}, "id = ?", id)
+
+	if tx.Error != nil {
+		return tx.Error
+	}
+	if tx.RowsAffected == 0 {
+		return errors.New("No product with that id was found")
+	}
+	return nil
 }
