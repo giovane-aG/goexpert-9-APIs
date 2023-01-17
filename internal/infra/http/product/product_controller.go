@@ -205,7 +205,7 @@ func (p *ProductController) Update(w http.ResponseWriter, r *http.Request) {
 // @Summary	Deletes a product
 // @Produce	json
 // @Tags	products
-// @Param	id	path	string	true "coment"
+// @Param	id	path	string	true "the product id"
 // @Failure	400	{object}	errors.Error
 // @Failure	404	{object}	errors.Error
 // @Failure	500	{object}	errors.Error
