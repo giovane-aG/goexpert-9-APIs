@@ -128,6 +128,12 @@ func (p *ProductController) FindById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if product == nil {
+		jsonEncoder.Encode(errors.Error{Message: "No product with that id was found"})
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
 	json.NewEncoder(w).Encode(product)
 }
 
@@ -195,4 +201,29 @@ func (p *ProductController) Update(w http.ResponseWriter, r *http.Request) {
 	jsonEncoder.Encode(updatedProduct)
 	return
 }
-func (p *ProductController) Delete(w http.ResponseWriter, r *http.Request) {}
+
+// @Summary	Deletes a product
+// @Produce	json
+// @Tags	products
+// @Param	id	path	string	true "coment"
+// @Failure	400	{object}	errors.Error
+// @Failure	404	{object}	errors.Error
+// @Failure	500	{object}	errors.Error
+// @Success	200
+// @Security	ApiKeyAuth
+// @Router	/product/{id} [delete]
+func (p *ProductController) Delete(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	jsonEncoder := json.NewEncoder(w)
+
+	if id == "" {
+		jsonEncoder.Encode(errors.Error{Message: "it is necessary to insert the product id"})
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if err := p.ProductDB.Delete(id); err != nil {
+		jsonEncoder.Encode(errors.Error{Message: err.Error()})
+		w.WriteHeader(http.StatusNotFound)
+	}
+}
