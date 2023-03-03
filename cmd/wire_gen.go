@@ -8,7 +8,12 @@ package main
 
 import (
 	"github.com/giovane-aG/goexpert/9-APIs/internal/infra/database"
+	"github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/product"
 	"github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/user"
+)
+
+import (
+	_ "github.com/giovane-aG/goexpert/9-APIs/docs"
 )
 
 // Injectors from wire.go:
@@ -16,4 +21,9 @@ import (
 func NewUserController(user database.User) *user_controller.UserController {
 	userController := user_controller.NewUserController(user)
 	return userController
+}
+
+func NewProductController(product *database.Product) *product_controller.ProductController {
+	productController := product_controller.NewProductController(product)
+	return productController
 }
