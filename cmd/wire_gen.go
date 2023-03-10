@@ -9,6 +9,8 @@ package main
 import (
 	"github.com/giovane-aG/goexpert/9-APIs/internal/infra/database"
 	"gorm.io/gorm"
+	"github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/product"
+	"github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/user"
 )
 
 import (
@@ -20,4 +22,14 @@ import (
 func InitializeUserDatabase(db2 *gorm.DB) *database.User {
 	user := database.NewUser(db2)
 	return user
+}
+
+func NewUserController(user database.User) *user_controller.UserController {
+	userController := user_controller.NewUserController(user)
+	return userController
+}
+
+func NewProductController(product *database.Product) *product_controller.ProductController {
+	productController := product_controller.NewProductController(product)
+	return productController
 }

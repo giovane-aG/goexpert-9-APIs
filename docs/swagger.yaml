@@ -99,314 +99,343 @@ paths:
   /auth/login:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Login user
       parameters:
-      - description: user request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dtos.LoginDto'
+        - description: user request
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/dtos.LoginDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dtos.AcessToken'
+            $ref: "#/definitions/dtos.AcessToken"
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/errors.Error'
+            $ref: "#/definitions/errors.Error"
       summary: Login user
       tags:
-      - auth
+        - auth
   /product:
     post:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: the product info
-        in: body
-        name: product
-        required: true
-        schema:
-          $ref: '#/definitions/dtos.CreateProductDto'
+        - description: the product info
+          in: body
+          name: product
+          required: true
+          schema:
+            $ref: "#/definitions/dtos.CreateProductDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/entity.Product'
+            $ref: "#/definitions/entity.Product"
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/errors.Error'
+            $ref: "#/definitions/errors.Error"
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/errors.Error'
+            $ref: "#/definitions/errors.Error"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Creates a product
       tags:
-      - products
+        - products
   /product/{id}:
+    delete:
+      parameters:
+        - description: the product id
+          in: path
+          name: id
+          required: true
+          type: string
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/errors.Error"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/errors.Error"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/errors.Error"
+      security:
+        - ApiKeyAuth: []
+      summary: Deletes a product
+      tags:
+        - products
     put:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: the product info
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: the product info
-        in: body
-        name: product
-        required: true
-        schema:
-          $ref: '#/definitions/dtos.UpdateProductDto'
+        - description: the product info
+          in: path
+          name: id
+          required: true
+          type: string
+        - description: the product info
+          in: body
+          name: product
+          required: true
+          schema:
+            $ref: "#/definitions/dtos.UpdateProductDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.Product'
+            $ref: "#/definitions/entity.Product"
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/errors.Error'
+            $ref: "#/definitions/errors.Error"
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/errors.Error'
+            $ref: "#/definitions/errors.Error"
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/errors.Error'
+            $ref: "#/definitions/errors.Error"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Updates a product
       tags:
-      - products
+        - products
   /product/findAll:
     get:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: the page in the results
-        in: query
-        name: page
-        type: integer
-      - description: the number of records returned
-        in: query
-        name: limit
-        type: integer
+        - description: the page in the results
+          in: query
+          name: page
+          type: integer
+        - description: the number of records returned
+          in: query
+          name: limit
+          type: integer
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
             items:
-              $ref: '#/definitions/entity.Product'
+              $ref: "#/definitions/entity.Product"
             type: array
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/errors.Error'
+            $ref: "#/definitions/errors.Error"
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/errors.Error'
+            $ref: "#/definitions/errors.Error"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Fetches all products
       tags:
-      - products
+        - products
   /product/findById/{id}:
     get:
       consumes:
-      - application/json
+        - application/json
       parameters:
-      - description: the id of the product
-        in: path
-        name: id
-        required: true
-        type: string
+        - description: the id of the product
+          in: path
+          name: id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.Product'
+            $ref: "#/definitions/entity.Product"
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/errors.Error'
+            $ref: "#/definitions/errors.Error"
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/errors.Error'
+            $ref: "#/definitions/errors.Error"
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/errors.Error'
+            $ref: "#/definitions/errors.Error"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Fetches a product by id
       tags:
-      - products
+        - products
   /user:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Create new user
       parameters:
-      - description: user request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dtos.CreateUserDto'
+        - description: user request
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/dtos.CreateUserDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "201":
           description: Created
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/errors.Error'
+            $ref: "#/definitions/errors.Error"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Create new user
       tags:
-      - users
+        - users
   /user/{id}:
     delete:
       description: Delete user
       parameters:
-      - description: the id of the user
-        in: path
-        name: id
-        required: true
-        type: string
+        - description: the id of the user
+          in: path
+          name: id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/errors.Error'
+            $ref: "#/definitions/errors.Error"
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/errors.Error'
+            $ref: "#/definitions/errors.Error"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Delete user
       tags:
-      - users
+        - users
     put:
       description: Update user
       parameters:
-      - description: the id of the user
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: payload to update the user
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dtos.UpdateUserDto'
+        - description: the id of the user
+          in: path
+          name: id
+          required: true
+          type: string
+        - description: payload to update the user
+          in: body
+          name: request
+          required: true
+          schema:
+            $ref: "#/definitions/dtos.UpdateUserDto"
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/errors.Error'
+            $ref: "#/definitions/errors.Error"
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/errors.Error'
+            $ref: "#/definitions/errors.Error"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Update user
       tags:
-      - users
+        - users
   /user/findByEmail/{email}:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Find user by email
       parameters:
-      - description: the email of the user
-        in: path
-        name: email
-        required: true
-        type: string
+        - description: the email of the user
+          in: path
+          name: email
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.User'
+            $ref: "#/definitions/entity.User"
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/errors.Error'
+            $ref: "#/definitions/errors.Error"
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/errors.Error'
+            $ref: "#/definitions/errors.Error"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Find user by email
       tags:
-      - users
+        - users
   /user/findById/{id}:
     get:
       description: Find user by id
       parameters:
-      - description: the id of the user
-        in: path
-        name: id
-        required: true
-        type: string
+        - description: the id of the user
+          in: path
+          name: id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entity.User'
+            $ref: "#/definitions/entity.User"
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/errors.Error'
+            $ref: "#/definitions/errors.Error"
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/errors.Error'
+            $ref: "#/definitions/errors.Error"
       security:
-      - ApiKeyAuth: []
+        - ApiKeyAuth: []
       summary: Find user by id
       tags:
-      - users
+        - users
 securityDefinitions:
   ApiKeyAuth:
     in: header

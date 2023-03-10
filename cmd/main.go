@@ -12,8 +12,6 @@ import (
 
 	"github.com/giovane-aG/goexpert/9-APIs/internal/infra/database"
 	auth_controller "github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/auth"
-	product_controller "github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/product"
-	user_controller "github.com/giovane-aG/goexpert/9-APIs/internal/infra/http/user"
 
 	_ "github.com/giovane-aG/goexpert/9-APIs/docs"
 
@@ -58,10 +56,9 @@ func initServer(port int, db *gorm.DB) {
 	tokenAuth := jwtauth.New("HS256", []byte(config.JWTSecret), nil)
 
 	userDb := database.NewUser(db)
-	productDb := database.NewProduct(db)
 
-	userController := user_controller.NewUserController(*userDb)
-	productController := product_controller.NewProductController(productDb)
+	userController := NewUserController(*database.NewUser(db))
+	productController := NewProductController(database.NewProduct(db))
 
 	r.Use(middleware.WithValue("jwtAuth", tokenAuth))
 	authController := auth_controller.NewAuthController(userDb, config.JWTExpiresIn)
